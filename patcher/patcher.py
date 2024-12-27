@@ -5,6 +5,7 @@ import glob
 import importlib
 
 exclude_imports = ["__init__.py", "Patch.py"]
+include_patches = ["LiveLocationPatch"]
 
 
 class Patcher:
@@ -15,6 +16,8 @@ class Patcher:
         for path in glob.iglob(os.path.join(current_dir, "*.*")):
             if os.path.basename(path) in exclude_imports:
                 continue
+            if include_patches and pathlib.Path(path).stem not in include_patches:
+                continue
             module_name = "patcher.patches." + pathlib.Path(path).stem
             module = importlib.import_module(module_name, module_name)
             inner_class = (
@@ -23,10 +26,6 @@ class Patcher:
                 else getattr(module, dir(module)[1])
             )
             self.patches.append(inner_class(self.extracted_path))
-
-    def patch(self):
-        self.find_classes()
-        self.patch_classes()
 
     def find_classes(self):
         patches_to_find = self.patches.copy()
@@ -43,6 +42,7 @@ class Patcher:
                 patch.class_data = data
                 patch.class_path = filename
                 patches_to_find.remove(patch)
+                cprint(f"[+] Found {patch} class: {patch.class_path}", "green")
         for patch in self.patches:
             if patch.class_data is None:
                 cprint(f"[-] Did not find {patch} class.", "red")
