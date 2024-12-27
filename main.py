@@ -39,9 +39,10 @@ def main():
     extractor = Extractor(path, args.output, args.temp_path)
     if not args.skip_decompile:
         extractor.extract_apk()
+    patcher = Patcher(extractor.temp_path)
+    patcher.find_classes()
     if not args.no_patching:
-        patcher = Patcher(extractor.temp_path)
-        patcher.patch()
+        patcher.patch_classes()
     if not args.skip_compile:
         input("Press Enter to continue to compilation back and signing stage...")
         extractor.compile_smali()
