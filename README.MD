@@ -13,8 +13,8 @@ The content provided is for educational and informational purposes only.
 
 ## Requirements
 
-1. Python3
-2. Java
+- Python3
+- Java
 
 ## Installation
 
@@ -34,5 +34,5 @@ python main.py -p ./moovit.apk -o moovitpatched.apk
 
 ## Credits
 
-- [WhatsApp Patcher](https://github.com/Schwartzblat/WhatsAppPatcher/) by @Schwartzblat
+- [WhatsApp Patcher](https://github.com/Schwartzblat/WhatsAppPatcher/) by [@Schwartzblat](https://github.com/Schwartzblat)
     - Took a lot of utils from this code. Thank you!!
