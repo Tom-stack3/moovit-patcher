@@ -21,6 +21,8 @@ The content provided is for educational and informational purposes only.
 ```bash
 git clone https://github.com/Tom-stack3/moovit-patcher.git
 cd moovit-patcher
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
