@@ -8,6 +8,7 @@ The content provided is for educational and informational purposes only.
 |  Feature | Availability |
 | -------- | ------------ |
 | Live Location enabled | WP |
+| Moovit+ enabled | WP |
 | Ads disabled | WP |
 | Analytics disabled | WP |
 

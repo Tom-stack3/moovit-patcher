@@ -16,6 +16,10 @@ def main():
     parser.add_argument(
         "--temp-path", dest="temp_path", type=str, default="./extracted"
     )
+    parser.add_argument(
+        "--no-patching", "-np", action="store_true", default=False,
+        help="Only extract and compile the APK, do not apply patches."
+    )
     args = parser.parse_args()
     path = args.path
     if not os.path.exists(path) or not os.access(path, os.R_OK):
@@ -26,8 +30,10 @@ def main():
         exit(-1)
     extractor = Extractor(path, args.output, args.temp_path)
     extractor.extract_apk()
-    patcher = Patcher(extractor.temp_path)
-    patcher.patch()
+    if not args.no_patching:
+        patcher = Patcher(extractor.temp_path)
+        patcher.patch()
+    input("Press Enter to continue to compilation back and signing stage...")
     extractor.compile_smali()
     extractor.sign_apk()
     print(f"Took {default_timer()-start} seconds to complete the run.")
