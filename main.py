@@ -20,6 +20,10 @@ def main():
         "--no-patching", "-np", action="store_true", default=False,
         help="Only extract and compile the APK, do not apply patches."
     )
+    parser.add_argument(
+        "--skip-decompile", "-sd", action="store_true", default=False,
+        help="Skip decompiling the APK, use what is already in the temp path."
+    )
     args = parser.parse_args()
     path = args.path
     if not os.path.exists(path) or not os.access(path, os.R_OK):
@@ -29,7 +33,8 @@ def main():
         cprint("[+] Input path and output paths should be a APK files", color="red")
         exit(-1)
     extractor = Extractor(path, args.output, args.temp_path)
-    extractor.extract_apk()
+    if not args.skip_decompile:
+        extractor.extract_apk()
     if not args.no_patching:
         patcher = Patcher(extractor.temp_path)
         patcher.patch()
