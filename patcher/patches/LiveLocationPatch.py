@@ -22,7 +22,7 @@ class LiveLocationPatch(Patch):
     """
 
     def __init__(self, extracted_path):
-        super().__init__(extracted_path)
+        super().__init__(extracted_path, is_multi_class=False)
         self.print_message = "[+] Patching Live Location feature on method..."
 
     def class_filter(self, class_data: str) -> bool:
@@ -36,7 +36,7 @@ class LiveLocationPatch(Patch):
                 return False
         return True
 
-    def class_modifier(self, class_data) -> str:
+    def class_modifier(self, class_data, class_path) -> str:
         function_body = self.IS_FEATURE_ON_METHOD_RE.findall(class_data)[0]
         return class_data.replace(
             function_body,

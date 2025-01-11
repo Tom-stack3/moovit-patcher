@@ -29,28 +29,34 @@ class Patcher:
 
     def find_classes(self):
         patches_to_find = self.patches.copy()
-        for filename in glob.iglob(
-            os.path.join(self.extracted_path, "**", "*.smali"), recursive=True
-        ):
-            if len(patches_to_find) == 0:
-                break
-            with open(filename, "r", encoding="utf8") as f:
-                data = f.read()
-            for patch in patches_to_find:
+        for patch in patches_to_find:
+            cprint(f"[+] Searching for {patch} classes...", "yellow")
+            for filename in glob.iglob(
+                os.path.join(self.extracted_path, "**", "*.smali"), recursive=True
+            ):
+                with open(filename, "r", encoding="utf8") as f:
+                    data = f.read()
                 if not patch.class_filter(data):
                     continue
-                patch.class_data = data
-                patch.class_path = filename
-                patches_to_find.remove(patch)
+
+                patch.class_data.append(data)
+                patch.class_path.append(filename)
                 cprint(f"[+] Found {patch} class: {patch.class_path}", "green")
+
+                if not patch.is_multi_class:
+                    break
+
         for patch in self.patches:
-            if patch.class_data is None:
-                cprint(f"[-] Did not find {patch} class.", "red")
+            if len(patch.class_data) == 0:
+                cprint(f"[-] Did not find {patch} classes.", "red")
 
     def patch_classes(self):
         for patch in self.patches:
-            if patch.class_data is None:
+            if len(patch.class_data) == 0:
                 continue
             cprint(patch.print_message, "green")
-            with open(patch.class_path, "w") as f:
-                f.write(patch.class_modifier(patch.class_data))
+            for class_data, class_path in zip(patch.class_data, patch.class_path):
+                with open(class_path, "w") as f:
+                    f.write(patch.class_modifier(class_data, class_path))
+                cprint(f"[+] Patched {patch} class: {class_path}", "green")
+        cprint("[+] Finished patching classes.", "green")
