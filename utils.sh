@@ -100,5 +100,5 @@ if [ -z "$1" ]; then
     echo "4 - Install patched APK"
     echo "5 - Install original APK"
     echo "6 - Run Frida server on the device"
-    echo "7 - Run app with Frida"
+    echo "7 - Run app with Frida script"
 fi
