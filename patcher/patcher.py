@@ -5,8 +5,7 @@ import glob
 import importlib
 
 exclude_imports = ["__init__.py", "Patch.py"]
-include_patches = ["LiveLocationPatch"]
-
+include_patches = ["LiveLocationPatch", "BypassSignaturePatch"]
 
 class Patcher:
     def __init__(self, extracted_path):
@@ -41,10 +40,10 @@ class Patcher:
 
                 patch.class_data.append(data)
                 patch.class_path.append(filename)
-                cprint(f"[+] Found {patch} class: {patch.class_path}", "green")
-
                 if not patch.is_multi_class:
                     break
+
+            cprint(f"[+] Found {patch} class: {patch.class_path}", "green")
 
         for patch in self.patches:
             if len(patch.class_data) == 0:
