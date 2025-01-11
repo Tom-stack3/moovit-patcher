@@ -10,5 +10,6 @@
 **.json
 **.jks
 **.iml
+**.log
 build/
 secrets
