@@ -9,7 +9,7 @@ create_rev_proxy_first_time() {
     if [ "$(ls -A /tmp/burp)" ]; then
         rm /tmp/burp/*
     fi
-    echo "[+] Go to Burp Suite -> Proxy -> Options -> Proxy Listeners -> Add -> Bind to port 8081 (All interfaces)"
+    echo "[+] Go to Burp Suite -> Proxy -> Proxy Settings -> Proxy Listeners -> Add -> Bind to port 8081 (All interfaces)"
     echo "[+] Export the certificate in DER format and save it as burp.der in Documents"
     echo "[+] Press Enter when you are ready..."
     read
@@ -65,6 +65,12 @@ run_app_with_frida() {
     "$FRIDA" -U -f com.tranzmate -l frida.js
 }
 
+run_frida_server() {
+    "$ADB" shell ps | grep frida-server && echo "Frida server is already running!" && return
+    echo "[+] Running Frida on the device..."
+    echo "/data/local/tmp/frida-server &" | "$ADB" shell su
+}
+
 if [ "$1" == "1" ]; then
     create_rev_proxy_first_time
 fi
@@ -81,6 +87,9 @@ if [ "$1" == "5" ]; then
     install_original_apk
 fi
 if [ "$1" == "6" ]; then
+    run_frida_server
+fi
+if [ "$1" == "7" ]; then
     run_app_with_frida
 fi
 if [ -z "$1" ]; then
@@ -90,5 +99,6 @@ if [ -z "$1" ]; then
     echo "3 - Apply patches to app and install patched APK"
     echo "4 - Install patched APK"
     echo "5 - Install original APK"
-    echo "6 - Run app with Frida"
+    echo "6 - Run Frida server on the device"
+    echo "7 - Run app with Frida script"
 fi

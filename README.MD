@@ -11,7 +11,7 @@ Apply patches to Moovit APK.
 |  Feature | Availability |
 | -------- | ------------ |
 | Live Location enabled | ✅ |
-| Signature Verifier Bypass | WIP |
+| Signature Verifier Bypass | ✅ |
 | Moovit+ enabled | WIP |
 | Ads disabled | WIP |
 | Analytics disabled | WIP |
