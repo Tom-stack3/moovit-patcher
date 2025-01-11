@@ -8,20 +8,16 @@ class BypassSignaturePatch(Patch):
 
     Replacing:
     ```smali
-    .line 19
     const-string v1, "X-Android-Cert"
-
-    .line 20
+    # ...
     # addRequestProperty is also used in the code
     invoke-virtual {p1, v1, v0}, Ljava/net/URLConnection;->setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V
     ```
 
     With:
     ```smali
-    .line 19
     const-string v1, "X-Android-Cert"
-
-    .line 20
+    # ...
     const-string v0, "<original signature of APK>"
     invoke-virtual {p1, v1, v0}, Ljava/net/URLConnection;->setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V
     ```
@@ -57,15 +53,11 @@ class BypassSignaturePatch(Patch):
         return True
 
     def class_modifier(self, class_data, class_path) -> str:
-        print(f"Modifying class {class_path}")
         # entire_line_sequence: the entire sequence of lines that we found with the regex.
         # invoke_line: the line of the invoke-virtual method. We want to insert our patch right before it.
         # reg_name: the register name of the third parameter of the invoke-virtual method.
         # This is the register that we want to replace with the original signature.
         entire_line_sequence, invoke_line, reg_name = self.API_METHOD_RE.findall(class_data)[0]
-        # print(f"Found sequence: {entire_line_sequence}")
-        # print(f"Found invoke line: {invoke_line}")
-        print(f"Found register name: {reg_name}")
 
         # Each class has a different register name and signature case.
         if "com/google/android/gms/internal/firebase-auth-api/zzacv.smali" in class_path:
@@ -93,5 +85,9 @@ class BypassSignaturePatch(Patch):
         )
 
     def _get_original_signature(self) -> str:
-        sig = subprocess.check_output(f"keytool -printcert -file {self.PATH_TO_CERT} | grep 'SHA1' | awk '{{print $NF}}'", shell=True).decode('utf-8').strip()
-        return sig.replace(":", "").upper()
+        out = subprocess.check_output(["keytool", "-printcert", "-file", self.PATH_TO_CERT]).decode('utf-8')
+        for line in out.splitlines():
+            if "SHA1" in line:
+                sig = line.split()[-1]
+                return sig.replace(":", "")
+        raise ValueError("SHA1 signature not found in certificate")

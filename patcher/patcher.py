@@ -7,6 +7,7 @@ import importlib
 exclude_imports = ["__init__.py", "Patch.py"]
 include_patches = ["LiveLocationPatch", "BypassSignaturePatch"]
 
+
 class Patcher:
     def __init__(self, extracted_path):
         self.extracted_path = extracted_path
