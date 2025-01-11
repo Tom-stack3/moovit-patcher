@@ -9,7 +9,7 @@ create_rev_proxy_first_time() {
     if [ "$(ls -A /tmp/burp)" ]; then
         rm /tmp/burp/*
     fi
-    echo "[+] Go to Burp Suite -> Proxy -> Options -> Proxy Listeners -> Add -> Bind to port 8081 (All interfaces)"
+    echo "[+] Go to Burp Suite -> Proxy -> Proxy Settings -> Proxy Listeners -> Add -> Bind to port 8081 (All interfaces)"
     echo "[+] Export the certificate in DER format and save it as burp.der in Documents"
     echo "[+] Press Enter when you are ready..."
     read
