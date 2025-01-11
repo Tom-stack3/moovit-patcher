@@ -73,27 +73,20 @@ run_frida_server() {
 
 if [ "$1" == "1" ]; then
     create_rev_proxy_first_time
-fi
-if [ "$1" == "2" ]; then
+elif [ "$1" == "2" ]; then
     create_rev_proxy_when_cert_installed
-fi
-if [ "$1" == "3" ]; then
+elif [ "$1" == "3" ]; then
     apply_patches
-fi
-if [ "$1" == "4" ]; then
+elif [ "$1" == "4" ]; then
     install_patched_apk
-fi
-if [ "$1" == "5" ]; then
+elif [ "$1" == "5" ]; then
     install_original_apk
-fi
-if [ "$1" == "6" ]; then
+elif [ "$1" == "6" ]; then
     run_frida_server
-fi
-if [ "$1" == "7" ]; then
+elif [ "$1" == "7" ]; then
     run_app_with_frida
-fi
-if [ -z "$1" ]; then
-    echo "Usage: $0 <1|2>"
+else
+    echo "Usage: $0 <option>"
     echo "1 - Create reverse proxy with Burp Suite for the first time"
     echo "2 - Create reverse proxy with Burp Suite when certificate is already installed on the device"
     echo "3 - Apply patches to app and install patched APK"
