@@ -4,7 +4,7 @@ Apply patches to Moovit APK.
 
 > DISCLAIMER: This project is not affiliated with Moovit.\
 > This project is not responsible for any misuse or damage caused by this program.\
-> The content provided is for educational and informational purposes only.
+> This project is intended for educational and informational purposes only.
 
 ## Features
 
