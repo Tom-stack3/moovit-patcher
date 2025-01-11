@@ -172,28 +172,126 @@ setTimeout(function() {
     //     };
     // });
 
-    Java.perform(function () {
-        var sp = Java.use("android.app.SharedPreferencesImpl$EditorImpl");
-        sp.putString.implementation = function (key, value) {
-            console.log(`putString("${key}", "${value}")`);
+    // Java.perform(function () {
+    //     var sp = Java.use("android.app.SharedPreferencesImpl$EditorImpl");
+    //     sp.putString.implementation = function (key, value) {
+    //         console.log(`putString("${key}", "${value}")`);
 
-            let outer = this.this$0.value; // SharedPreferencesImpl 
-            console.log("pref file: " + outer.mFile.value);
+    //         let outer = this.this$0.value; // SharedPreferencesImpl 
+    //         console.log("pref file: " + outer.mFile.value);
 
-            return this.putString(key, value);
-        }
+    //         return this.putString(key, value);
+    //     }
 
-        sp.putBoolean.implementation = function (key, value) {
-            console.log(`putBoolean("${key}", ${value})`);
+    //     sp.putBoolean.implementation = function (key, value) {
+    //         console.log(`putBoolean("${key}", ${value})`);
 
-            let outer = this.this$0.value; // SharedPreferencesImpl 
-            console.log("pref file: " + outer.mFile.value);
+    //         let outer = this.this$0.value; // SharedPreferencesImpl 
+    //         console.log("pref file: " + outer.mFile.value);
             
-            this.putBoolean("is_subscribed", true);
-            return this.putBoolean(key, value);
+    //         this.putBoolean("is_subscribed", true);
+    //         return this.putBoolean(key, value);
+    //     }
+    
+    //     // Add similar hooks for other put methods (putInt, putFloat, etc.)
+    // });
+    
+    // =========== Android Signatures Checks ===========
+    /*
+    package com.google.android.gms.internal.p002firebaseauthapi;
+
+    import android.content.Context;
+    import android.content.pm.PackageManager;
+    import com.google.android.gms.common.internal.p;
+    import ud.a;
+    import ud.k;
+
+    // renamed from: com.google.android.gms.internal.firebase-auth-api.zzado  reason: invalid package
+    // compiled from: com.google.firebase:firebase-auth@@22.3.1
+    public final class zzado {
+        private final String zza;
+        private final String zzb;
+
+        public final String zza() {
+            return this.zzb;
         }
-    
-        // Add similar hooks for other put methods (putInt, putFloat, etc.)
+    */
+    Java.perform(function () {
+        var zzado = Java.use('com.google.android.gms.internal.firebase-auth-api.zzado');
+        zzado.zza.implementation = function () {
+            console.log(`[${getCurrentTime()}] zzado.zza called`);
+            console.log(`[${getCurrentTime()}] this.zza:`, this.zza);
+            console.log(`[${getCurrentTime()}] this.zzb:`, this.zzb);
+            var rev = this.zza();
+            console.log(`[${getCurrentTime()}] Return value of zzado.zza:`, rev)
+
+            return rev;
+        };
     });
-    
+
+    /*
+    package com.google.firebase.installations.remote;
+// compiled from: FirebaseInstallationServiceClient
+public class c {
+    public final String f() {
+    */
+    Java.perform(function () {
+        var c = Java.use('com.google.firebase.installations.remote.c');
+        c.f.implementation = function () {
+            console.log(`[${getCurrentTime()}] c.f called`);
+            var rev = this.f();
+            console.log(`[${getCurrentTime()}] Return value of c.f:`, rev)
+
+            return rev;
+        };
+    });
+
+    /*
+    package com.google.firebase.remoteconfig.internal;
+    public class ConfigFetchHttpClient {
+public final String i() {
+    */
+
+    Java.perform(function () {
+        var ConfigFetchHttpClient = Java.use('com.google.firebase.remoteconfig.internal.ConfigFetchHttpClient');
+        ConfigFetchHttpClient.i.implementation = function () {
+            console.log(`[${getCurrentTime()}] ConfigFetchHttpClient.i called`);
+            var rev = this.i();
+            console.log(`[${getCurrentTime()}] Return value of ConfigFetchHttpClient.i:`, rev)
+
+            return rev;
+        };
+    });
+
+    /*
+    package com.google.firebase.remoteconfig.internal;
+    public class d {
+public final String l() {
+    */
+    Java.perform(function () {
+        var d = Java.use('com.google.firebase.remoteconfig.internal.d');
+        d.l.implementation = function () {
+            console.log(`[${getCurrentTime()}] d.l called`);
+            var rev = this.l();
+            console.log(`[${getCurrentTime()}] Return value of d.l:`, rev)
+
+            return rev;
+        };
+    });
+
+    /*
+    package ya0;
+    public abstract class a
+public static String Q0(@NonNull Context context) {
+    */
+    Java.perform(function () {
+        var a = Java.use('ya0.a');
+        a.Q0.implementation = function (context) {
+            console.log(`[${getCurrentTime()}] ya0.a.Q0 called`);
+            var rev = this.Q0(context);
+            console.log(`[${getCurrentTime()}] Return value of ya0.a.Q0:`, rev)
+
+            return rev;
+        };
+    });
 }, 0);
