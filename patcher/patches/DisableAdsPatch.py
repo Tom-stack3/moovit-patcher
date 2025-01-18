@@ -6,17 +6,9 @@ class DisableAdsPatch(Patch):
     """
     Patch to disable ads in the app.
 
-    We are looking for the MobileAdsManafer class
+    We are looking for the MobileAdsManager class
     .method public U()Z
     from: lu/k0.java
-    """
-
-    """
-    .method public [a-zA-Z]()Z
-    *
-    const-string v1, "is_ads_free_version"
-    *
-    .end method
     """
 
     METHOD_RE = re.compile(
@@ -29,7 +21,6 @@ class DisableAdsPatch(Patch):
         """,
         re.VERBOSE | re.DOTALL,
     )
-    # Create a method that returns true always
     METHOD_REPLACE = """
     .locals 1
     const/4 v0, 0x1
@@ -53,10 +44,6 @@ class DisableAdsPatch(Patch):
 
     def class_modifier(self, class_data, class_path) -> str:
         function_body = self.METHOD_RE.findall(class_data)[0]
-        print(function_body)
-        print("REPLACE")
-        print(self.METHOD_REPLACE)
-        # return class_data
         return class_data.replace(
             function_body,
             self.METHOD_REPLACE,
