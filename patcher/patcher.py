@@ -5,7 +5,7 @@ import glob
 import importlib
 
 exclude_imports = ["__init__.py", "Patch.py"]
-include_patches = ["LiveLocationPatch", "BypassSignaturePatch"]
+include_patches = ["LiveLocationPatch", "BypassSignaturePatch", "DisableAdsPatch"]
 
 
 class Patcher:
