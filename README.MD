@@ -1,9 +1,8 @@
 # Moovit Patcher
 
-Apply patches to Moovit APK.
+Apply patches to Moovit APK, for educational purposes only.
 
 > DISCLAIMER: This project is not affiliated with Moovit.\
-> This project is not responsible for any misuse or damage caused by this program.\
 > This project is intended for educational and informational purposes only.
 
 ## Features
