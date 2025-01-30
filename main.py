@@ -43,6 +43,7 @@ def main():
     patcher.find_classes()
     if not args.no_patching:
         patcher.patch_classes()
+        patcher.patch_resources()
     if not args.skip_compile:
         input("Press Enter to continue to compilation back and signing stage...")
         extractor.compile_smali()
