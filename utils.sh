@@ -39,7 +39,7 @@ create_rev_proxy_when_cert_installed() {
 
 apply_patches() {
     echo "[+] Applying patches..."
-    python main.py --skip-prompts -p ./moovit_5.145.apk -o moovitpatched_5.145.apk
+    python main.py --skip-prompts -p ./moovit_5.145.apk -o moovitpatched_5.145.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
     echo "[+] Patches applied successfully!"
     install_patched_apk
 }

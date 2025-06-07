@@ -3,10 +3,10 @@ from termcolor import cprint
 import os
 import glob
 import importlib
-from .patches.LPatch import LPatch
+from .patches.RPatch import RPatch
 
 exclude_imports = ["__init__.py", "Patch.py"]
-include_patches = ["LiveLocationPatch", "BypassSignaturePatch", "DisableAdsPatch"]
+include_patches = ["LiveLocationPatch", "DisableAdsPatch"]
 
 
 class Patcher:
@@ -62,9 +62,9 @@ class Patcher:
                 cprint(f"[+] Patched {patch} class: {class_path}", "green")
         cprint("[+] Finished patching classes.", "green")
 
-    def patch_resources(self):
+    def patch_resources(self, custom_google_api_key):
         filename = os.path.join(self.extracted_path, "resources.arsc")
-        lp = LPatch(self.extracted_path)
+        lp = RPatch(self.extracted_path, custom_google_api_key)
         if os.path.exists(filename):
             cprint("[+] Patching resources.arsc...", "green")
             with open(filename, "rb") as f:

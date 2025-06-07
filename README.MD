@@ -33,7 +33,8 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-python main.py -p ./moovit.apk -o moovitpatched.apk
+CUSTOM_GOOGLE_API_KEY="<your Google API key>
+python main.py -p ./moovit.apk -o moovitpatched.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
 ```
 
 ## Credits

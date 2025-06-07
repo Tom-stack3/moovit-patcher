@@ -11,6 +11,9 @@ def main():
     parser = argparse.ArgumentParser(description="Patch Moovit APK")
     parser.add_argument("-path", "-p", dest="path", type=str, required=True)
     parser.add_argument(
+        "--custom-google-api-key", "-gakey", dest="custom_google_api_key", type=str, required=True
+    )
+    parser.add_argument(
         "-output", "-o", dest="output", type=str, default="patched.apk"
     )
     parser.add_argument(
@@ -47,7 +50,7 @@ def main():
     patcher.find_classes()
     if not args.no_patching:
         patcher.patch_classes()
-        patcher.patch_resources()
+        patcher.patch_resources(args.custom_google_api_key)
     if not args.skip_compile:
         if not args.skip_prompts:
             input("Press Enter to continue to compilation back and signing stage...")
