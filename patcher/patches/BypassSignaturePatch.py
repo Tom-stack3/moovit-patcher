@@ -5,6 +5,7 @@ import subprocess
 class BypassSignaturePatch(Patch):
     """
     Patch to bypass Android-Cert signature checks in different API requests.
+    Note that it doesn't work with Google Services. Instead, use your own Google API Key.
 
     Replacing:
     ```smali

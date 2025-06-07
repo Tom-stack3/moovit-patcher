@@ -2,7 +2,6 @@
 source secrets
 ADB="/mnt/c/Program Files/Genymobile/Genymotion/tools/adb.exe"
 FRIDA="/mnt/c/Users/$USERNAME/AppData/Local/Programs/Python/Python312/Scripts/frida.exe"
-PATCHES_PROJECT="~/dev/moovit/moovit-patcher"
 
 create_rev_proxy_first_time() {
     mkdir -p /tmp/burp && cd /tmp/burp
@@ -39,19 +38,22 @@ create_rev_proxy_when_cert_installed() {
 }
 
 apply_patches() {
-    cd $PATCHES_PROJECT
     echo "[+] Applying patches..."
-    python main.py -p ./moovit_5.145.apk -o moovitpatched_5.145.apk
+    python main.py --skip-prompts -p ./moovit_5.145.apk -o moovitpatched_5.145.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
     echo "[+] Patches applied successfully!"
     install_patched_apk
 }
 
 install_patched_apk() {
+    echo "[+] Uninstalling app and installing patched APK..."
+    "$ADB" uninstall com.tranzmate && echo "Uninstalled original app successfully" || echo "[-] Original app not found!"
     echo "[+] Installing patched APK..."
     "$ADB" install -r moovitpatched_5.145.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
 }
 
 install_original_apk() {
+    echo "[+] Uninstalling app and installing original APK..."
+    "$ADB" uninstall com.tranzmate && echo "Uninstalled original app successfully" || echo "[-] Original app not found!"
     echo "[+] Installing original APK..."
     "$ADB" install -r moovit_5.145.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
 }
