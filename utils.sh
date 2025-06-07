@@ -2,7 +2,6 @@
 source secrets
 ADB="/mnt/c/Program Files/Genymobile/Genymotion/tools/adb.exe"
 FRIDA="/mnt/c/Users/$USERNAME/AppData/Local/Programs/Python/Python312/Scripts/frida.exe"
-PATCHES_PROJECT="~/dev/moovit/moovit-patcher"
 
 create_rev_proxy_first_time() {
     mkdir -p /tmp/burp && cd /tmp/burp
@@ -39,7 +38,6 @@ create_rev_proxy_when_cert_installed() {
 }
 
 apply_patches() {
-    cd $PATCHES_PROJECT
     echo "[+] Applying patches..."
     python main.py --skip-prompts -p ./moovit_5.145.apk -o moovitpatched_5.145.apk
     echo "[+] Patches applied successfully!"
