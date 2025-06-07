@@ -28,6 +28,10 @@ def main():
         "--skip-compile", "-sc", action="store_true", default=False,
         help="Skip compiling back the APK"
     )
+    parser.add_argument(
+        "--skip-prompts", "-sp", action="store_true", default=False,
+        help="Skip prompts waiting for user input"
+    )
     args = parser.parse_args()
     path = args.path
     if not os.path.exists(path) or not os.access(path, os.R_OK):
@@ -45,7 +49,8 @@ def main():
         patcher.patch_classes()
         patcher.patch_resources()
     if not args.skip_compile:
-        input("Press Enter to continue to compilation back and signing stage...")
+        if not args.skip_prompts:
+            input("Press Enter to continue to compilation back and signing stage...")
         extractor.compile_smali()
         extractor.sign_apk()
     print(f"Took {default_timer()-start} seconds to complete the run.")

@@ -41,7 +41,7 @@ create_rev_proxy_when_cert_installed() {
 apply_patches() {
     cd $PATCHES_PROJECT
     echo "[+] Applying patches..."
-    python main.py -p ./moovit_5.145.apk -o moovitpatched_5.145.apk
+    python main.py --skip-prompts -p ./moovit_5.145.apk -o moovitpatched_5.145.apk
     echo "[+] Patches applied successfully!"
     install_patched_apk
 }
