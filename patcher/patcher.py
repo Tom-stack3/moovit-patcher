@@ -6,7 +6,8 @@ import importlib
 from .patches.RPatch import RPatch
 
 exclude_imports = ["__init__.py", "Patch.py"]
-include_patches = ["LiveLocationPatch", "DisableAdsPatch", "RemovePaymentSuggestionPatch"]
+include_patches = ["LiveLocationPatch", "DisableAdsPatch",
+                   "RemovePaymentSuggestionPatch", "RemoveSubscriptionBottomPromoPatch"]
 
 
 class Patcher:
