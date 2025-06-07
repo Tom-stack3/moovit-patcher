@@ -47,11 +47,15 @@ apply_patches() {
 }
 
 install_patched_apk() {
+    echo "[+] Uninstalling app and installing patched APK..."
+    "$ADB" uninstall com.tranzmate && echo "Uninstalled original app successfully" || echo "[-] Original app not found!"
     echo "[+] Installing patched APK..."
     "$ADB" install -r moovitpatched_5.145.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
 }
 
 install_original_apk() {
+    echo "[+] Uninstalling app and installing original APK..."
+    "$ADB" uninstall com.tranzmate && echo "Uninstalled original app successfully" || echo "[-] Original app not found!"
     echo "[+] Installing original APK..."
     "$ADB" install -r moovit_5.145.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
 }
