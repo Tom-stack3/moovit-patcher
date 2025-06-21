@@ -12,6 +12,9 @@ Apply patches to Moovit APK, for educational purposes only.
 | Live Location enabled | ✅ |
 | Ads disabled | ✅ |
 | Signature Verifier Bypass | ✅ |
+| Disable Taxi suggestions | ✅ |
+| Remove "Join and Pay with Moovit" section | ✅ |
+| Remove bottom Moovit+ banner | ✅ |
 | Moovit+ enabled | WIP |
 | Analytics disabled | WIP |
 
