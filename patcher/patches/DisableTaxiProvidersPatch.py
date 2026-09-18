@@ -45,7 +45,7 @@ class DisableTaxiProvidersPatch(Patch):
 
     invoke-static {}, Ljava/util/Collections;->emptyMap()Ljava/util/Map;
     move-result-object v0
-    iput-object p1, p0, Lcom/moovit/app/taxi/providers/TaxiProvidersManager;->b:Ljava/util/Map;
+    iput-object v0, p0, Lcom/moovit/app/taxi/providers/TaxiProvidersManager;->b:Ljava/util/Map;
 
     return-void
     """
@@ -55,6 +55,15 @@ class DisableTaxiProvidersPatch(Patch):
         self.print_message = "[+] Applying Disable Taxi Providers patch..."
 
     def class_filter(self, class_data: str) -> bool:
+        # Other classes reference the manager too; only accept the class itself.
+        if not re.search(
+            r"^\.class\b.*\sLcom/moovit/app/taxi/providers/TaxiProvidersManager;",
+            class_data,
+            re.MULTILINE,
+        ):
+            return False
+        if not self.METHOD_RE.search(class_data):
+            return False
         keywords = [
             'TaxiProvidersManager',
             'TaxiProvider',

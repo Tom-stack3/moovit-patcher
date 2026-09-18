@@ -22,6 +22,16 @@ Apply patches to Moovit APK, for educational purposes only.
 
 - Python3
 - Java
+- Google Maps SDK API key
+
+### How to create your own API key
+1. In [Google Cloud Console](https://console.cloud.google.com/), create a project and attach a billing account. Maps Platform requires billing, though there's a free monthly allowance.
+2. Under APIs & Services → Library, enable:
+  * Maps SDK for Android
+  * Geocoding API
+  * Places API
+  * Geolocation API
+3. Under APIs & Services → Credentials, choose Create credentials → API key.
 
 ## Installation
 
@@ -36,9 +46,21 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-CUSTOM_GOOGLE_API_KEY="<your Google API key>
+# Set env variable:
+CUSTOM_GOOGLE_API_KEY="<your Google API key>"
+# Run patcher:
 python main.py -p ./moovit.apk -o moovitpatched.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
 ```
+
+## Testing / Installing
+
+With exactly one device or emulator connected (`adb devices`), install and launch the patched APK:
+
+```bash
+python -m unittest tests.test_app_launch
+```
+
+This can also be used to install the `.apk` through `adb`.
 
 ## Credits
 

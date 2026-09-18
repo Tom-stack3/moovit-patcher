@@ -3,6 +3,7 @@ import os
 from termcolor import cprint
 from patcher.extractor import Extractor
 from patcher.patcher import Patcher
+from patcher.patches.RPatch import RPatch
 from timeit import default_timer
 
 
@@ -42,6 +43,14 @@ def main():
         exit(-1)
     if not path.endswith(".apk") or not args.output.endswith(".apk"):
         cprint("[+] Input path and output paths should be a APK files", color="red")
+        exit(-1)
+    # resources.arsc is patched in place, so the key must keep the original length.
+    if len(args.custom_google_api_key) != len(RPatch.MOOVIT_GOOGLE_API_KEY):
+        cprint(
+            f"[+] Google API key must be {len(RPatch.MOOVIT_GOOGLE_API_KEY)} characters long, "
+            f"got {len(args.custom_google_api_key)}",
+            color="red",
+        )
         exit(-1)
     extractor = Extractor(path, args.output, args.temp_path)
     if not args.skip_decompile:
