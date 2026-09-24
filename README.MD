@@ -61,7 +61,6 @@ With exactly one device or emulator connected (`adb devices`), install and launc
 python -m unittest tests.test_app_launch
 ```
 
-This can also be used to install the `.apk` through `adb`.
 
 ## Credits
 
