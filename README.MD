@@ -25,6 +25,7 @@ Apply patches to Moovit APK, for educational purposes only.
 - Google Maps SDK API key
 
 ### How to create your own API key
+
 1. In [Google Cloud Console](https://console.cloud.google.com/), create a project and attach a billing account. Maps Platform requires billing, though there's a free monthly allowance.
 2. Under APIs & Services → Library, enable:
   * Maps SDK for Android
