@@ -34,9 +34,10 @@ class Patcher:
         patches_to_find = self.patches.copy()
         for patch in patches_to_find:
             cprint(f"[+] Searching for {patch} classes...", "yellow")
-            for filename in glob.iglob(
+            # Sorted so the first match does not depend on filesystem readdir order.
+            for filename in sorted(glob.iglob(
                 os.path.join(self.extracted_path, "**", "*.smali"), recursive=True
-            ):
+            )):
                 with open(filename, "r", encoding="utf8") as f:
                     data = f.read()
                 if not patch.class_filter(data):
@@ -59,8 +60,10 @@ class Patcher:
                 continue
             cprint(patch.print_message, "green")
             for class_data, class_path in zip(patch.class_data, patch.class_path):
-                with open(class_path, "w") as f:
-                    f.write(patch.class_modifier(class_data, class_path))
+                # Build the patched content first so a failing patch cannot truncate the file.
+                patched = patch.class_modifier(class_data, class_path)
+                with open(class_path, "w", encoding="utf8") as f:
+                    f.write(patched)
                 cprint(f"[+] Patched {patch} class: {class_path}", "green")
         cprint("[+] Finished patching classes.", "green")
 
