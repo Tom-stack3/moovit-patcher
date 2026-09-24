@@ -55,7 +55,7 @@ class DisableTaxiProvidersPatch(Patch):
         self.print_message = "[+] Applying Disable Taxi Providers patch..."
 
     def class_filter(self, class_data: str) -> bool:
-        # Other classes reference the manager too; only accept the class itself.
+        # Other classes reference the manager too. Only accept the class itself.
         if not re.search(
             r"^\.class\b.*\sLcom/moovit/app/taxi/providers/TaxiProvidersManager;",
             class_data,
