@@ -26,12 +26,15 @@ Apply patches to Moovit APK, for educational purposes only.
 
 ### How to create your own API key
 
+The custom key is only needed to render the **map tiles**. Those are drawn by
+Google Play Services (the official Maps SDK), which derives the
+`X-Android-Cert` header from the installed app's signing certificate.
+A value the app itself cannot set, so the re-signed APK is rejected with the original
+key and must use your own.
+
 1. In [Google Cloud Console](https://console.cloud.google.com/), create a project and attach a billing account. Maps Platform requires billing, though there's a free monthly allowance.
 2. Under APIs & Services → Library, enable:
   - Maps SDK for Android
-  - Geocoding API
-  - Places API
-  - Geolocation API
 3. Under APIs & Services → Credentials, choose Create credentials → API key.
 
 ## Installation
