@@ -8,7 +8,11 @@ from .patches.RPatch import RPatch
 exclude_imports = ["__init__.py", "Patch.py"]
 include_patches = ["RemovePaymentSuggestionPatch",
                    "DisableTaxiProvidersPatch", "GoogleMapsApiKeyPatch",
-                   "EnableMoovitPlusPatch"]
+                   "EnableMoovitPlusPatch", "DisableKinesisAnalyticsPatch",
+                   "DisableTelemetryMessagesPatch", "DisableMarketingEventsPatch",
+                   "DisableAppsFlyerPatch", "DisableFirebaseAnalyticsPatch",
+                   "DisableFacebookAppEventsPatch", "DisableBrazePatch",
+                   "DisableCrashlyticsPatch", "DisableFirebasePerformancePatch"]
 
 
 class Patcher:
