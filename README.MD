@@ -15,7 +15,21 @@ Apply patches to Moovit APK, for educational purposes only.
 | Disable Taxi suggestions | ✅ |
 | Remove "Join and Pay with Moovit" section | ✅ |
 | Moovit+ enabled | ✅ |
-| Analytics disabled | WIP |
+| Analytics disabled | ✅ (see below) |
+
+### Disabled analytics
+
+| What | Sent to | Patch |
+| ---- | ------- | ----- |
+| Analytics events, with the last known GPS location attached | Moovit (AWS Kinesis `AnalyticsStream`) | `DisableKinesisAnalyticsPatch` |
+| Device fingerprint, battery/network/storage metrics, ad IDs | Moovit (AWS Kinesis `ServerStream`) | `DisableTelemetryMessagesPatch` |
+| Marketing events, including trip origin and destination addresses | AppsFlyer, Braze, Facebook, Firebase | `DisableMarketingEventsPatch` |
+| Install attribution, sessions | AppsFlyer | `DisableAppsFlyerPatch` |
+| Events, user ID and properties, automatic events | Firebase Analytics | `DisableFirebaseAnalyticsPatch` |
+
+Messages the app needs (push token, favorites, reports) are still sent.
+Firebase Crashlytics and Performance Monitoring are not disabled yet.
+Since AppsFlyer is never started, AppsFlyer (OneLink) deep links do not work.
 
 ## Requirements
 
