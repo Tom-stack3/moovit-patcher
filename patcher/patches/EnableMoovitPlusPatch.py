@@ -46,10 +46,12 @@ class EnableMoovitPlusPatch(Patch):
         self.print_message = "[+] Applying Enable Moovit+ patch..."
 
     def class_filter(self, class_data: str) -> bool:
-        return (
-            '"' + self.CONFIG_NAME + '"' in class_data
-            and self.DEFAULT_RE.search(class_data) is not None
-        )
+        # AppDevConfigs (qv/a) is the only class that declares the boolean dev
+        # config "allow_subscription_features", and does so via the
+        # (String, boolean) config constructor. The exact 0x0 default bound to
+        # this config is flipped in class_modifier via DEFAULT_RE.
+        keywords = ['"' + self.CONFIG_NAME + '"', "Ljava/lang/String;Z)V"]
+        return all(k in class_data for k in keywords)
 
     def class_modifier(self, class_data, class_path) -> str:
         return self.DEFAULT_RE.sub(r"\g<1>0x1\g<2>", class_data, count=1)
