@@ -15,7 +15,7 @@ Apply patches to Moovit APK, for educational purposes only.
 | Disable Taxi suggestions | ✅ |
 | Remove "Join and Pay with Moovit" section | ✅ |
 | Moovit+ enabled | ✅ |
-| Analytics disabled | Partial (see below) |
+| Analytics disabled | ✅ (see below) |
 
 ### Disabled analytics
 
@@ -26,14 +26,18 @@ Apply patches to Moovit APK, for educational purposes only.
 | Marketing events, including trip origin and destination addresses | AppsFlyer, Braze, Facebook, Firebase | `DisableMarketingEventsPatch` |
 | Install attribution, sessions | AppsFlyer | `DisableAppsFlyerPatch` |
 | Events, user ID and properties, automatic events | Firebase Analytics | `DisableFirebaseAnalyticsPatch` |
+| Automatic app events (install, app activation), advertiser ID | Facebook | `DisableFacebookAppEventsPatch` |
+| Sessions, device data, user profile attributes, location | Braze | `DisableBrazePatch` |
+| Crash reports, session events | Firebase Crashlytics | `DisableCrashlyticsPatch` |
+| Performance traces, network request metrics | Firebase Performance Monitoring | `DisableFirebasePerformancePatch` |
 
 Messages the app needs (push token, favorites, reports) are still sent.
-Since AppsFlyer is never started, AppsFlyer (OneLink) deep links do not work.
 
-Not disabled yet:
-- Facebook SDK automatic app events (install, app activation).
-- Braze SDK sessions, device data, user profile attributes and location (location collection is enabled in the app's Braze config).
-- Firebase Crashlytics and Performance Monitoring.
+Side effects:
+- AppsFlyer (OneLink) deep links do not work, since AppsFlyer is never started.
+- Braze in-app messages, content cards and Braze push notifications are gone.
+
+Ads are not covered here, the ad SDKs still make their own requests.
 
 ## Requirements
 

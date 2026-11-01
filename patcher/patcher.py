@@ -10,7 +10,9 @@ include_patches = ["RemovePaymentSuggestionPatch",
                    "DisableTaxiProvidersPatch", "GoogleMapsApiKeyPatch",
                    "EnableMoovitPlusPatch", "DisableKinesisAnalyticsPatch",
                    "DisableTelemetryMessagesPatch", "DisableMarketingEventsPatch",
-                   "DisableAppsFlyerPatch", "DisableFirebaseAnalyticsPatch"]
+                   "DisableAppsFlyerPatch", "DisableFirebaseAnalyticsPatch",
+                   "DisableFacebookAppEventsPatch", "DisableBrazePatch",
+                   "DisableCrashlyticsPatch", "DisableFirebasePerformancePatch"]
 
 
 class Patcher:
