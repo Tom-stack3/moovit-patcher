@@ -48,9 +48,16 @@ pip install -r requirements.txt
 
 ## Usage
 
+Tested with Moovit 5.203.0.1812.
+
+Moovit is published as a split APK bundle, so download the `.apkm` bundle of the latest
+release from [APKMirror](https://www.apkmirror.com/apk/moovit/moovit-bus-train-live-info/).
+The patcher merges the bundle into a single APK (with APKEditor) before patching.
+A single `.apk` is accepted as well.
+
 ```bash
 CUSTOM_GOOGLE_API_KEY="<your Google API key>"
-python main.py -p ./moovit.apk -o moovitpatched.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
+python main.py -p ./moovit.apkm -o moovitpatched.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
 ```
 
 ## Testing
@@ -63,6 +70,7 @@ python -m unittest tests.test_app_launch
 
 ## Credits
 
+- [APKEditor](https://github.com/REAndroid/APKEditor) by [@REAndroid](https://github.com/REAndroid), used to merge split APK bundles.
 - [WhatsApp Patcher](https://github.com/Schwartzblat/WhatsAppPatcher/) by [@Schwartzblat](https://github.com/Schwartzblat)
   - Took a lot of utils from this code. Thank you!!
 

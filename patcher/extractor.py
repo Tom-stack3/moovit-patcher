@@ -4,6 +4,9 @@ import subprocess
 import os
 from termcolor import cprint
 import zipfile
+from .signing import get_signing_certificate
+
+BUNDLE_EXTENSIONS = (".apkm", ".apks", ".xapk")
 
 
 class Extractor:
@@ -12,9 +15,27 @@ class Extractor:
         self.temp_path = temp_path
         self.output_path = output_path
 
+    def merge_bundle(self):
+        """
+        Merge a split APK bundle (base.apk + config splits) into a single APK.
+        Moovit is only published as a bundle since 5.15x.
+        """
+        merged_path = os.path.splitext(self.apk_path)[0] + "-merged.apk"
+        if os.path.exists(merged_path):
+            os.remove(merged_path)
+        apk_editor = pathlib.Path(__file__).parent.parent / "bin" / "APKEditor-1.4.9.jar"
+        cprint("[+] Merging the APK bundle with APKEditor.", "green")
+        subprocess.check_call(
+            ["java", "-jar", str(apk_editor), "m", "-i", self.apk_path, "-o", merged_path],
+            timeout=20 * 60,
+        )
+        self.apk_path = merged_path
+
     def extract_apk(self):
         if os.path.exists(self.temp_path):
             shutil.rmtree(self.temp_path)
+        if self.apk_path.endswith(BUNDLE_EXTENSIONS):
+            self.merge_bundle()
         apktool_base_path = pathlib.Path(__file__).parent.parent / "bin"
         apk_tool = apktool_base_path / "apktool_2.7.0.jar"
         cprint("[+] Running apktool to decompile the apk.", "green")
@@ -34,6 +55,14 @@ class Extractor:
         )
         cprint("[+] Apktool decompiled the apk.", "green")
         self.extract_dex()
+        self.extract_signing_certificate()
+
+    def extract_signing_certificate(self):
+        # Kept under original/, which apktool does not pack back into the APK.
+        cert_path = os.path.join(self.temp_path, "original", "signing-cert.der")
+        os.makedirs(os.path.dirname(cert_path), exist_ok=True)
+        with open(cert_path, "wb") as f:
+            f.write(get_signing_certificate(self.apk_path))
 
     def extract_dex(self):
         with zipfile.ZipFile(self.apk_path) as z:

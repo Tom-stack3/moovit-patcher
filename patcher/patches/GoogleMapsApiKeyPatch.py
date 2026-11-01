@@ -1,40 +1,8 @@
 from .Patch import Patch
 from .RPatch import RPatch
+import hashlib
 import os
 import re
-import shutil
-import subprocess
-
-
-def _find_keytool() -> str:
-    """
-    Locate the keytool executable even when it is not on PATH.
-
-    The patcher already depends on a JDK (apktool is run via ``java``), so
-    derive keytool from the running JRE's ``java.home`` as a fallback.
-    """
-    found = shutil.which("keytool")
-    if found:
-        return found
-    java_home = os.environ.get("JAVA_HOME")
-    if java_home:
-        candidate = os.path.join(java_home, "bin", "keytool")
-        if os.path.exists(candidate) or os.path.exists(candidate + ".exe"):
-            return candidate
-    try:
-        out = subprocess.check_output(
-            ["java", "-XshowSettings:properties", "-version"],
-            stderr=subprocess.STDOUT,
-        ).decode("utf-8", "replace")
-    except (OSError, subprocess.CalledProcessError):
-        return "keytool"
-    for line in out.splitlines():
-        if "java.home" in line:
-            home = line.split("=", 1)[-1].strip()
-            candidate = os.path.join(home, "bin", "keytool")
-            if os.path.exists(candidate) or os.path.exists(candidate + ".exe"):
-                return candidate
-    return "keytool"
 
 
 class GoogleMapsApiKeyPatch(Patch):
@@ -45,23 +13,27 @@ class GoogleMapsApiKeyPatch(Patch):
     Map tiles still need the user's key: they go through Play Services, which
     computes X-Android-Cert from the installed signing certificate (not
     settable from app code), so the original key is rejected there. The web
-    services, though, are plain HTTP calls from Moovit's own client ya0/a.smali,
-    which sets the key and the X-Android-* headers itself.
+    services, though, are plain HTTP calls from Moovit's own client
+    (ya0/a.smali in 5.145, lx7.smali in 5.203), which sets the key and the
+    X-Android-* headers itself.
 
-    So this patch rewrites ya0/a.smali to return the original key from P0 and to send
-    the original signing certificate as X-Android-Cert, both of which satisfy
+    So this patch rewrites that client to return the original key from its key
+    getter and to send the original signing certificate as X-Android-Cert, both of which satisfy
     the key's restrictions. The user's key then only needs "Maps SDK for
     Android" enabled.
     """
 
     ORIGINAL_KEY = RPatch.MOOVIT_GOOGLE_API_KEY.decode()
 
-    P0_METHOD_RE = re.compile(
-        r"\.method public static P0\(Landroid/content/Context;\)Ljava/lang/String;.*?\.end method",
+    # The static String(Context) getter that reads the "google_wla_api_key"
+    # resource (P0 in 5.145, i0 in 5.203). Matched by body, since R8 renames it.
+    KEY_METHOD_RE = re.compile(
+        r"\.method public static (\w+)\(Landroid/content/Context;\)Ljava/lang/String;"
+        r"(?:(?!\.end method).)*?\"google_wla_api_key\".*?\.end method",
         re.DOTALL,
     )
-    P0_STUB = (
-        ".method public static P0(Landroid/content/Context;)Ljava/lang/String;\n"
+    KEY_METHOD_STUB = (
+        ".method public static {name}(Landroid/content/Context;)Ljava/lang/String;\n"
         "    .locals 1\n\n"
         '    const-string v0, "{key}"\n\n'
         "    return-object v0\n"
@@ -80,7 +52,8 @@ class GoogleMapsApiKeyPatch(Patch):
     MOVE_STRING_TO_REG = """
     const-string {}, "{}"
     """
-    PATH_TO_CERT = os.path.join("original", "META-INF", "BNDLTOOL.RSA")
+    # Saved by Extractor from the original APK Signing Block.
+    PATH_TO_CERT = os.path.join("original", "signing-cert.der")
 
     def __init__(self, extracted_path):
         super().__init__(extracted_path, is_multi_class=False)
@@ -88,19 +61,20 @@ class GoogleMapsApiKeyPatch(Patch):
         self._original_signature = self._get_original_signature()
 
     def class_filter(self, class_data: str) -> bool:
-        # ya0/a is the only class that both reads the Maps key resource and
-        # sets the X-Android-Cert header on its web-service requests.
+        # The web-service client is the only class that both reads the Maps key
+        # resource and sets the X-Android-Cert header on its requests.
         keywords = [
             "google_wla_api_key",
             "X-Android-Cert",
-            "P0(Landroid/content/Context;)Ljava/lang/String;",
         ]
-        return all(k in class_data for k in keywords)
+        return all(k in class_data for k in keywords) and bool(
+            self.KEY_METHOD_RE.search(class_data)
+        )
 
     def class_modifier(self, class_data, class_path) -> str:
         # Force the original key onto the web-service requests.
-        class_data = self.P0_METHOD_RE.sub(
-            self.P0_STUB.format(key=self.ORIGINAL_KEY),
+        class_data = self.KEY_METHOD_RE.sub(
+            lambda m: self.KEY_METHOD_STUB.format(name=m.group(1), key=self.ORIGINAL_KEY),
             class_data,
             count=1,
         )
@@ -118,11 +92,5 @@ class GoogleMapsApiKeyPatch(Patch):
 
     def _get_original_signature(self) -> str:
         cert_path = os.path.join(self.extracted_path, self.PATH_TO_CERT)
-        out = subprocess.check_output(
-            [_find_keytool(), "-printcert", "-file", cert_path]
-        ).decode("utf-8")
-        for line in out.splitlines():
-            if "SHA1" in line:
-                sig = line.split()[-1]
-                return sig.replace(":", "")
-        raise ValueError("SHA1 signature not found in certificate")
+        with open(cert_path, "rb") as f:
+            return hashlib.sha1(f.read()).hexdigest()

@@ -2,7 +2,8 @@ from .Patch import Patch
 
 
 class RPatch(Patch):
-    MOOVIT_GOOGLE_API_KEY = b"AIzaSyA3jYXo-8c6fN1l6cpdt1pROK6vXKcvKj0"
+    # Moovit's google_api_key resource, rotated between releases (5.145: AIzaSyA3jYXo-...).
+    MOOVIT_GOOGLE_API_KEY = b"AIzaSyCO5ioIA3IfeMEjIXwa2yIhAWA-12evCn0"
 
     def __init__(self, extracted_path, custom_google_api_key):
         super().__init__(extracted_path, is_multi_class=False)

@@ -1,7 +1,7 @@
 import argparse
 import os
 from termcolor import cprint
-from patcher.extractor import Extractor
+from patcher.extractor import Extractor, BUNDLE_EXTENSIONS
 from patcher.patcher import Patcher
 from patcher.patches.RPatch import RPatch
 from timeit import default_timer
@@ -41,8 +41,8 @@ def main():
     if not os.path.exists(path) or not os.access(path, os.R_OK):
         cprint(f"[+] Unable to access file: {path}", color="red")
         exit(-1)
-    if not path.endswith(".apk") or not args.output.endswith(".apk"):
-        cprint("[+] Input path and output paths should be a APK files", color="red")
+    if not path.endswith((".apk",) + BUNDLE_EXTENSIONS) or not args.output.endswith(".apk"):
+        cprint("[+] Input path should be an APK or APK bundle (.apkm/.apks/.xapk), and output path an APK file", color="red")
         exit(-1)
     # resources.arsc is patched in place, so the key must keep the original length.
     if len(args.custom_google_api_key) != len(RPatch.MOOVIT_GOOGLE_API_KEY):

@@ -6,52 +6,47 @@ class EnableMoovitPlusPatch(Patch):
     """
     Enable the Moovit+ subscription state locally.
 
-    Moovit gates every "is the user subscribed?" decision on a single developer
-    config, "allow_subscription_features" (AppDevConfigs). Both
-    SubscriptionManager.isSubscribed and the MoovitSubscriptionsManager state
-    resolver return "subscribed" as soon as it is on, which in turn hides the
-    "Upgrade to Moovit+" banners and popups. The config is declared as:
+    Moovit decides "is the user subscribed?" in SubscriptionBridgeImpl, which
+    persists the purchased product ids ("subscribed_skus") and derives the
+    subscription state from whether that set is non-empty:
 
-        new h.a("allow_subscription_features", false)
+        return !subscribedSkus.isEmpty();
 
-    i.e. in smali, inside the defining class' static initializer:
+    i.e. in smali:
 
-        const-string vX, "allow_subscription_features"
-        const/4 vY, 0x0                                         # default: false
-        invoke-direct {.., vX, vY}, L..$a;-><init>(Ljava/lang/String;Z)V
+        invoke-interface {vX}, Ljava/util/Collection;->isEmpty()Z
+        move-result vY
+        xor-int/lit8 vY, vY, 0x1
 
-    Flipping that default from 0x0 to 0x1 is deliberately version-resilient: it
-    keys off the unobfuscated config name and the boolean-config constructor
-    shape, not the obfuscated class/method/field names (g0, a0$d, h, a, qv.a)
+    The same expression feeds isSubscribed(), the initial value of the
+    subscription StateFlow and its updates from the entitlements stream.
+    Every premium package (ad free, AI search, safety, ...) and the Moovit+
+    menu items read one of those, so forcing the result to true unlocks them
+    and hides the "Upgrade to Moovit+" banners and popups.
+
+    Matching is keyed off the unobfuscated "SubscriptionBridgeImpl" log tag
+    and the isEmpty/xor shape, not the obfuscated class/method/field names
     that R8 reshuffles between releases.
+    Up to 5.145 the gate was the "allow_subscription_features" dev config instead.
     """
 
-    CONFIG_NAME = "allow_subscription_features"
+    LOG_TAG = '"SubscriptionBridgeImpl"'
 
-    # From the const-string that loads the config name, through the boolean
-    # default it is constructed with, up to the h.a(String, boolean) ctor call.
-    # Non-greedy so the captured "0x0" is the default bound to THIS config, and
-    # the trailing ctor match guards against flipping an unrelated const.
-    DEFAULT_RE = re.compile(
-        r'(const-string\s+\w+,\s+"' + re.escape(CONFIG_NAME) + r'"'
-        r'(?:(?!const-string).)*?'
-        r'const/4\s+\w+,\s+)0x0'
-        r'((?:(?!const-string).)*?'
-        r'invoke-direct\s+\{[^}]*\},\s+L[\w/$]+;-><init>\(Ljava/lang/String;Z\)V)',
-        re.DOTALL,
+    NOT_EMPTY_RE = re.compile(
+        r"(invoke-interface\s+\{\w+\},\s+Ljava/util/Collection;->isEmpty\(\)Z\s+"
+        r"(?:\.line\s+\d+\s+)*"
+        r"move-result\s+(\w+)\s+"
+        r"(?:\.line\s+\d+\s+)*)"
+        r"xor-int/lit8\s+\2,\s+\2,\s+0x1"
     )
 
     def __init__(self, extracted_path):
-        super().__init__(extracted_path, is_multi_class=False)
+        super().__init__(extracted_path, is_multi_class=True)
         self.print_message = "[+] Applying Enable Moovit+ patch..."
 
     def class_filter(self, class_data: str) -> bool:
-        # AppDevConfigs (qv/a) is the only class that declares the boolean dev
-        # config "allow_subscription_features", and does so via the
-        # (String, boolean) config constructor. The exact 0x0 default bound to
-        # this config is flipped in class_modifier via DEFAULT_RE.
-        keywords = ['"' + self.CONFIG_NAME + '"', "Ljava/lang/String;Z)V"]
-        return all(k in class_data for k in keywords)
+        # SubscriptionBridgeImpl and its entitlements-observer lambda.
+        return self.LOG_TAG in class_data and bool(self.NOT_EMPTY_RE.search(class_data))
 
     def class_modifier(self, class_data, class_path) -> str:
-        return self.DEFAULT_RE.sub(r"\g<1>0x1\g<2>", class_data, count=1)
+        return self.NOT_EMPTY_RE.sub(r"\g<1>const/16 \g<2>, 0x1", class_data)

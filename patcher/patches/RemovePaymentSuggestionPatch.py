@@ -8,20 +8,21 @@ class RemovePaymentSuggestionPatch(Patch):
     This "Pay with Moovit" feature is called MOT in the app.
     I once found the meaning of it, but forgot since then. Moovit O-something T-something.
 
-    We are looking for the b0 class:
-    .method public final a4(Lcom/google/firebase/perf/metrics/Trace;Lcom/moovit/payment/account/model/PaymentAccount;)V
-    from: com/moovit/app/mot/b0.smali
+    We are looking for the MOT home section fragment
+    (com/moovit/app/mot/b0.smali in 5.145, k0d.smali in 5.203), which logs
+    "MOT is not enabled!" and hides itself when MOT is not supported.
     """
 
-    LINE_RE = re.compile(
+    # The MOT_SUPPORT_VALIDATOR check right before the "not enabled" log:
+    #     if (!TRUE.equals(motSupported)) { log("MOT is not enabled!"); hideSection(); }
+    # Dropping the branch makes the section always take the hide path.
+    BRANCH_RE = re.compile(
         r"""
-        if-nez\s+v1,\s+:cond_1
+        if-nez\s+\w+,\s+:cond_\w+\s+
+        (?=(?:\.line\s+\d+\s+)*const-string\s+\w+,\s+"MOT\ is\ not\ enabled!")
         """,
-        re.VERBOSE | re.DOTALL,
+        re.VERBOSE,
     )
-    LINE_REPLACE = """
-    if-eqz v1, :cond_1
-    """
 
     def __init__(self, extracted_path):
         super().__init__(extracted_path, is_multi_class=False)
@@ -38,8 +39,6 @@ class RemovePaymentSuggestionPatch(Patch):
         return True
 
     def class_modifier(self, class_data, class_path) -> str:
-        line_body = self.LINE_RE.findall(class_data)[0]
-        return class_data.replace(
-            line_body,
-            self.LINE_REPLACE,
-        )
+        if not self.BRANCH_RE.search(class_data):
+            raise ValueError("MOT support check not found in " + class_path)
+        return self.BRANCH_RE.sub("", class_data, count=1)
