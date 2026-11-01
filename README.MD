@@ -14,8 +14,7 @@ Apply patches to Moovit APK, for educational purposes only.
 | Signature Verifier Bypass | ✅ |
 | Disable Taxi suggestions | ✅ |
 | Remove "Join and Pay with Moovit" section | ✅ |
-| Remove bottom Moovit+ banner | ✅ |
-| Moovit+ enabled | WIP |
+| Moovit+ enabled | ✅ |
 | Analytics disabled | WIP |
 
 ## Requirements
