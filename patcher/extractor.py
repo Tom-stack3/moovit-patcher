@@ -18,7 +18,7 @@ class Extractor:
     def merge_bundle(self):
         """
         Merge a split APK bundle (base.apk + config splits) into a single APK.
-        Moovit is only published as a bundle.
+        Moovit is only published as a bundle since 5.15x.
         """
         merged_path = os.path.splitext(self.apk_path)[0] + "-merged.apk"
         if os.path.exists(merged_path):
