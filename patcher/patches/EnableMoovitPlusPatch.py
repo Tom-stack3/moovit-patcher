@@ -23,7 +23,7 @@ class EnableMoovitPlusPatch(Patch):
     Every premium package (ad free, AI search, safety, ...) and the Moovit+
     menu items read one of those.
 
-    Newer screens (the "Remove ads with Moovit+" promo cell, live location
+    Other screens (the "Remove ads with Moovit+" promo cell, live location
     paywalls) skip the bridge and ask IsSubscribedStreamUseCase and its
     one-shot sibling instead. They apply the same !isEmpty() to the
     entitlements list, compiled as "xor-int/2addr vY, vOne". Forcing all of
@@ -33,7 +33,6 @@ class EnableMoovitPlusPatch(Patch):
     tag, the entitlements repository, IsSubscribedStreamUseCase) and the
     isEmpty/xor shape, not the obfuscated class/method/field names that R8
     reshuffles between releases.
-    Up to 5.145 the gate was the "allow_subscription_features" dev config instead.
     """
 
     ANCHORS = (

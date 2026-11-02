@@ -8,8 +8,7 @@ class RemovePaymentSuggestionPatch(Patch):
     This "Pay with Moovit" feature is called MOT in the app.
     I once found the meaning of it, but forgot since then. Moovit O-something T-something.
 
-    We are looking for the MOT home section fragment
-    (com/moovit/app/mot/b0.smali in 5.145, k0d.smali in 5.203), which logs
+    We are looking for the MOT home section fragment, which logs
     "MOT is not enabled!" and hides itself when MOT is not supported.
     """
 

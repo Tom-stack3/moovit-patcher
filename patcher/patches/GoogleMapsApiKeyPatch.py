@@ -13,9 +13,8 @@ class GoogleMapsApiKeyPatch(Patch):
     Map tiles still need the user's key: they go through Play Services, which
     computes X-Android-Cert from the installed signing certificate (not
     settable from app code), so the original key is rejected there. The web
-    services, though, are plain HTTP calls from Moovit's own client
-    (ya0/a.smali in 5.145, lx7.smali in 5.203), which sets the key and the
-    X-Android-* headers itself.
+    services, though, are plain HTTP calls from Moovit's own client, which
+    sets the key and the X-Android-* headers itself.
 
     So this patch rewrites that client to return the original key from its key
     getter and to send the original signing certificate as X-Android-Cert, both of which satisfy
@@ -26,7 +25,7 @@ class GoogleMapsApiKeyPatch(Patch):
     ORIGINAL_KEY = RPatch.MOOVIT_GOOGLE_API_KEY.decode()
 
     # The static String(Context) getter that reads the "google_wla_api_key"
-    # resource (P0 in 5.145, i0 in 5.203). Matched by body, since R8 renames it.
+    # resource. Matched by body, since R8 renames it.
     KEY_METHOD_RE = re.compile(
         r"\.method public static (\w+)\(Landroid/content/Context;\)Ljava/lang/String;"
         r"(?:(?!\.end method).)*?\"google_wla_api_key\".*?\.end method",
