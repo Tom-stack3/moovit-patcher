@@ -15,6 +15,7 @@ Apply patches to Moovit APK, for educational purposes only.
 | Disable Taxi suggestions | ✅ |
 | Remove "Join and Pay with Moovit" section | ✅ |
 | Moovit+ enabled | ✅ |
+| Moovit+ features the server turned off enabled | ✅ |
 | Analytics disabled | WIP |
 
 ## Requirements
