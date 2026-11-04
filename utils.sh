@@ -41,7 +41,7 @@ create_rev_proxy_when_cert_installed() {
 
 apply_patches() {
     echo "[+] Applying patches..."
-    python main.py --skip-prompts -p ./moovit_5.145.apk -o moovitpatched_5.145.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
+    python main.py --skip-prompts -p ./moovit_5.203.0.apkm -o moovitpatched_5.203.0.apk -gakey "$CUSTOM_GOOGLE_API_KEY"
     echo "[+] Patches applied successfully!"
     install_patched_apk
 }
@@ -50,14 +50,14 @@ install_patched_apk() {
     echo "[+] Uninstalling app and installing patched APK..."
     "$ADB" uninstall "$PACKAGE_NAME" && echo "Uninstalled original app successfully" || echo "[-] Original app not found!"
     echo "[+] Installing patched APK..."
-    "$ADB" install -r moovitpatched_5.145.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
+    "$ADB" install -r moovitpatched_5.203.0.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
 }
 
 install_original_apk() {
     echo "[+] Uninstalling app and installing original APK..."
     "$ADB" uninstall "$PACKAGE_NAME" && echo "Uninstalled original app successfully" || echo "[-] Original app not found!"
     echo "[+] Installing original APK..."
-    "$ADB" install -r moovit_5.145.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
+    "$ADB" install -r moovit_5.203.0-merged.apk && echo "[+] Patched APK installed successfully" || echo "[-] Failed to install patched APK"
 }
 
 run_app_with_frida() {
