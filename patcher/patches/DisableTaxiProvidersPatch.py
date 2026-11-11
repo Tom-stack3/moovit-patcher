@@ -7,6 +7,10 @@ class DisableTaxiProvidersPatch(Patch):
     Patch to remove "Taxi & Ride Hailing" section.
     Acts as if there are no Taxi Providers supported.
 
+    Covers the home screen only: the "Taxi & Ride Hailing" and "Transit on
+    Demand" sections and the "Available rides" row on the station card. Trip
+    results don't read this list; RemoveTaxiTripResultsPatch covers those.
+
     Patching TaxiProviderManager constructor to have empty list and map when initialized.
     We are looking for TaxiProvidersManager class:
     .method public constructor <init>(Ljava/util/List;)V
