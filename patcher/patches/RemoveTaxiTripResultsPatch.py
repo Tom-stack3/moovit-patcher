@@ -17,6 +17,9 @@ class RemoveTaxiTripResultsPatch(Patch):
         invoke-virtual {vProtocol, vX}, L...;->writeBool(Z)V
 
     (hashCode() also reads the field into a (Z)V call, hence the field header.)
+
+    Covers trip results only; the home screen taxi sections need
+    DisableTaxiProvidersPatch.
     """
 
     WRITE_RE = re.compile(
