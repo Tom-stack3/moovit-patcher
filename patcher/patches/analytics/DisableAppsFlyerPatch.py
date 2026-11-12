@@ -1,4 +1,4 @@
-from .Patch import Patch
+from ..Patch import Patch
 import re
 
 
@@ -9,9 +9,9 @@ class DisableAppsFlyerPatch(Patch):
 
     Making the methods that call AppsFlyerLib.init() and AppsFlyerLib.start() do nothing.
     We are looking for the AppsFlyerManager class:
-    .method public final g(Lax/b;Ljava/lang/String;)V
-    .method public final s(Landroid/content/Context;)V
-    from: su/e.smali
+    .method public final b()V
+    .method public final e(Landroid/content/ContextWrapper;)V
+    from: dr0.smali
     """
 
     METHOD_RES = [
@@ -27,7 +27,7 @@ class DisableAppsFlyerPatch(Patch):
         ),
         re.compile(
             r"""
-            \.method\s+public\s+final\s+\w+\(Landroid/content/Context;\)V\s*(
+            \.method\s+public\s+final\s+\w+\(L[\w/$]+;\)V\s*(
             (?:(?!\.end\s+method).)*?
             Lcom/appsflyer/AppsFlyerLib;->start\(Landroid/content/Context;\)V
             .*?

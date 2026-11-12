@@ -1,4 +1,4 @@
-from .Patch import Patch
+from ..Patch import Patch
 import re
 
 

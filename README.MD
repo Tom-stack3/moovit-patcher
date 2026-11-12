@@ -22,14 +22,16 @@ Apply patches to Moovit APK, for educational purposes only.
 | What | Sent to | Patch |
 | ---- | ------- | ----- |
 | Analytics events, with the last known GPS location attached | Moovit (AWS Kinesis `AnalyticsStream`) | `DisableKinesisAnalyticsPatch` |
-| Device fingerprint, battery/network/storage metrics, ad IDs | Moovit (AWS Kinesis `ServerStream`) | `DisableTelemetryMessagesPatch` |
-| Marketing events, including trip origin and destination addresses | AppsFlyer, Braze, Facebook, Firebase | `DisableMarketingEventsPatch` |
+| Device fingerprint, battery/network/storage metrics, ad IDs, install referrer | Moovit (AWS Kinesis `ServerStream`) | `DisableTelemetryMessagesPatch` |
+| Marketing events, including trip origin and destination addresses | AppsFlyer, Braze | `DisableMarketingEventsPatch` |
 | Install attribution, sessions | AppsFlyer | `DisableAppsFlyerPatch` |
 | Events, user ID and properties, automatic events | Firebase Analytics | `DisableFirebaseAnalyticsPatch` |
 | Automatic app events (install, app activation), advertiser ID | Facebook | `DisableFacebookAppEventsPatch` |
 | Sessions, device data, user profile attributes, location | Braze | `DisableBrazePatch` |
 | Crash reports, session events | Firebase Crashlytics | `DisableCrashlyticsPatch` |
 | Performance traces, network request metrics | Firebase Performance Monitoring | `DisableFirebasePerformancePatch` |
+| Advertising ID, Android ID, IP address, attribution ID | RevenueCat | `DisableRevenueCatAttributionPatch` |
+| Affiliate sessions with device data and the Moovit user ID | Button | `DisableButtonSdkPatch` |
 
 Messages the app needs (push token, favorites, reports) are still sent.
 
@@ -37,7 +39,7 @@ Side effects:
 - AppsFlyer (OneLink) deep links do not work, since AppsFlyer is never started.
 - Braze in-app messages, content cards and Braze push notifications are gone.
 
-Ads are not covered here, the ad SDKs still make their own requests.
+Not covered here: the ad SDKs still make their own requests, and the RevenueCat SDK still sends its own diagnostics.
 
 ## Requirements
 

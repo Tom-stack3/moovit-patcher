@@ -1,4 +1,4 @@
-from .Patch import Patch
+from ..Patch import Patch
 import re
 
 
@@ -8,9 +8,10 @@ class DisableCrashlyticsPatch(Patch):
     Reports are kept on the device and never sent.
 
     Making DataCollectionArbiter.isAutomaticDataCollectionEnabled() return false.
-    We are looking for the DataCollectionArbiter class:
-    .method public declared-synchronized d()Z
-    from: yh/w.smali
+    Firebase Sessions also checks it before sending session events.
+    We are looking for the DataCollectionArbiter class (merged with unrelated classes):
+    .method public declared-synchronized u()Z
+    from: x93.smali
     """
 
     METHOD_RE = re.compile(
@@ -33,9 +34,8 @@ class DisableCrashlyticsPatch(Patch):
 
     def class_filter(self, class_data: str) -> bool:
         keywords = [
-            'firebase_crashlytics_collection_enabled',
-            'An invalid data collection token was used.',
-            'Could not read data collection permission from manifest',
+            '"firebase_crashlytics_collection_enabled"',
+            '"com.google.firebase.crashlytics"',
         ]
         for k in keywords:
             if k not in class_data:

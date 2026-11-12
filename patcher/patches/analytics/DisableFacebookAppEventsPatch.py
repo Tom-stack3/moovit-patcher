@@ -1,4 +1,4 @@
-from .Patch import Patch
+from ..Patch import Patch
 import re
 
 
@@ -8,21 +8,22 @@ class DisableFacebookAppEventsPatch(Patch):
     Facebook login keeps working (the SDK still initializes).
 
     - Makes the "{app id}/activities" uploads do nothing: the app events batch request
-      (returns null, as when the SDK is disabled) and the install ping.
+      (returns null, as when the SDK is disabled) and the install ping (returns before the
+      request, the method is shared with other code).
     - Makes the AutoLogAppEventsEnabled and AdvertiserIDCollectionEnabled settings return false.
 
     We are looking for the classes:
-    .method public static final i(...)Lcom/facebook/GraphRequest;
-    from: com/facebook/appevents/k.smali (AppEventQueue)
-    .method public final K(Landroid/content/Context;Ljava/lang/String;)V
-    from: a8/u.smali (FacebookSdk)
+    .method public static final a(...)Lcom/facebook/w;
+    from: com/facebook/appevents/g.smali (AppEventQueue, com/facebook/w is GraphRequest)
+    .method public final run()V
+    from: ap7.smali (FacebookSdk install ping, merged with other runnables)
     .method public static final b()Z / d()Z ...
-    from: a8/l0.smali (UserSettingsManager)
+    from: com/facebook/d0.smali (UserSettingsManager)
     """
 
     ACTIVITIES_METHOD_RE = re.compile(
         r"""
-        \.method\s+[\w\s-]*?\w+\([\w/$;\[]*\)(V|Lcom/facebook/GraphRequest;)\s*(
+        \.method\s+[\w\s-]*?\w+\([\w/$;\[]*\)(V|Lcom/facebook/[\w/$]+;)\s*(
         (?:(?!\.end\s+method).)*?
         const-string\s+\w+,\s+"%s/activities"
         .*?
@@ -30,17 +31,12 @@ class DisableFacebookAppEventsPatch(Patch):
         """,
         re.VERBOSE | re.DOTALL,
     )
-    ACTIVITIES_REPLACE = {
-        "V": """
-    .locals 0
-    return-void
-    """,
-        "Lcom/facebook/GraphRequest;": """
+    ACTIVITIES_STRING_RE = re.compile(r'const-string\s+\w+,\s+"%s/activities"')
+    GRAPH_REQUEST_REPLACE = """
     .locals 1
     const/4 v0, 0x0
     return-object v0
-    """,
-    }
+    """
     SETTING_KEYS = [
         "com.facebook.sdk.AutoLogAppEventsEnabled",
         "com.facebook.sdk.AdvertiserIDCollectionEnabled",
@@ -71,7 +67,11 @@ class DisableFacebookAppEventsPatch(Patch):
     def class_modifier(self, class_data, class_path) -> str:
         patched = class_data
         for return_type, method_body in self.ACTIVITIES_METHOD_RE.findall(class_data):
-            patched = patched.replace(method_body, self.ACTIVITIES_REPLACE[return_type])
+            if return_type == "V":
+                replacement = self.ACTIVITIES_STRING_RE.sub(lambda m: "return-void\n\n    " + m.group(0), method_body)
+            else:
+                replacement = self.GRAPH_REQUEST_REPLACE
+            patched = patched.replace(method_body, replacement)
 
         if self.is_settings_class(class_data):
             fields = [
