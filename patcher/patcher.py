@@ -8,7 +8,13 @@ from .patches.RPatch import RPatch
 exclude_imports = ["__init__.py", "Patch.py"]
 include_patches = ["RemovePaymentSuggestionPatch",
                    "DisableTaxiProvidersPatch", "GoogleMapsApiKeyPatch",
-                   "EnableMoovitPlusPatch", "RemoveTaxiTripResultsPatch"]
+                   "EnableMoovitPlusPatch", "RemoveTaxiTripResultsPatch",
+                   "DisableKinesisAnalyticsPatch", "DisableTelemetryMessagesPatch",
+                   "DisableMarketingEventsPatch", "DisableAppsFlyerPatch",
+                   "DisableFirebaseAnalyticsPatch", "DisableFacebookAppEventsPatch",
+                   "DisableBrazePatch", "DisableCrashlyticsPatch",
+                   "DisableFirebasePerformancePatch", "DisableRevenueCatAttributionPatch",
+                   "DisableButtonSdkPatch"]
 
 
 class Patcher:
@@ -16,12 +22,14 @@ class Patcher:
         self.extracted_path = extracted_path
         self.patches = []
         current_dir = pathlib.Path(__file__).parent / "patches"
-        for path in glob.iglob(os.path.join(current_dir, "*.*")):
+        # Patches may be grouped in subpackages (e.g. patches/analytics/).
+        for path in glob.iglob(os.path.join(current_dir, "**", "*.py"), recursive=True):
             if os.path.basename(path) in exclude_imports:
                 continue
             if include_patches and pathlib.Path(path).stem not in include_patches:
                 continue
-            module_name = "patcher.patches." + pathlib.Path(path).stem
+            relative = pathlib.Path(path).relative_to(current_dir).with_suffix("")
+            module_name = "patcher.patches." + ".".join(relative.parts)
             module = importlib.import_module(module_name, module_name)
             inner_class = (
                 getattr(module, dir(module)[0])
