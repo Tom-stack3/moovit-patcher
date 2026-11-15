@@ -15,7 +15,7 @@ Apply patches to Moovit APK, for educational purposes only.
 | Disable Taxi and Transit on Demand suggestions | ✅ |
 | Remove "Join and Pay with Moovit" section | ✅ |
 | Moovit+ enabled | ✅ |
-| Analytics disabled | ✅ ([details](#disabled-analytics)) |
+| Analytics disabled ([details](#disabled-analytics)) | ✅ |
 
 ## Requirements
 
